@@ -13,6 +13,12 @@ Design Goals
   * Minimal - the core should be as small as possible, with as much of the logic in plugins as possible
   * Flexible - should not fail if external modules are not installed
 
+Why "Enki"?
+-----------
+
+Enki (also known as Enkil) is named after the Sumerian god of mischief, water, crafts, intelligence and creation.  His symbol was the double-helix snake, and his name can be translated as "Lord of the Earth".  See the [Wikipedia page](http://en.wikipedia.org/wiki/Enki) for more information.
+
+
 Author
 ------
 

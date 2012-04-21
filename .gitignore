@@ -1,4 +1,7 @@
-# Note: Much of this file is taken from GitHub's gitignores repository: https://github.com/github/gitignore
+# Ignore the testing directory, since it contains reports about my computer with sensitive information.
+testing/
+
+# Parts below taken from GitHub's gitignores repository: https://github.com/github/gitignore
 
 *.py[cod]
 

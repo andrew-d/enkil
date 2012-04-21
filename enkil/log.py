@@ -22,12 +22,18 @@ class CustomFormatter(logging.Formatter):
     modules are available.  For simplicity, the format string is hard-coded in
     the format() method of the class, and thus the `fmt` and `datefmt`
     arguments are ignored.
+
+    Note: The general idea behind this class was inspired by the
+          tornado.options module and the enable_pretty_logging() function.
     """
 
     def __init__(self, *args, **kwargs):
         super(CustomFormatter, self).__init__(*args, **kwargs)
 
-        # Do we have color?
+        # Do we have color?  If the "color" parameter is present and set to
+        # False, will override all other settings.
+        if kwargs.get('color', True) == False:
+            self._have_color = False
         if curses is not None:
             self._have_color = curses.can_change_color()
         elif colorama is not None:
@@ -83,6 +89,16 @@ class CustomFormatter(logging.Formatter):
 
 
 def getLogger(id, minLevel=logging.DEBUG):
+    """
+    This function gets a logger, given an id and minimum level.  The function
+    is usually called like:
+
+        getLogger(__name__)
+
+    The logger will have a custom formatter attached that attempts to print
+    log messages in color, if possible.
+    """
+
     logger = logging.getLogger(id)
     logger.setLevel(minLevel)
 

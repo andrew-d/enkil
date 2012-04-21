@@ -16,7 +16,9 @@ Design Goals
 Why "Enkil"?
 -----------
 
-Enkil (also known as Enki) is named after the Sumerian god of mischief, water, crafts, intelligence and creation.  His symbol was the double-helix snake, and his name can be translated as "Lord of the Earth".  See the [Wikipedia page](http://en.wikipedia.org/wiki/Enki) for more information.
+Enkil is named after the Sumerian god of mischief, water, crafts, intelligence and creation (who is also known as Enki).  His symbol was the double-helix snake, and his name can be translated as "Lord of the Earth".  See the [Wikipedia page](http://en.wikipedia.org/wiki/Enki) for more information.
+
+Enkil is pronounced "en-keel" ("keel" like the part of a boat).
 
 
 Author

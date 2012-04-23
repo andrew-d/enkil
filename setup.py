@@ -30,7 +30,7 @@ distutils.core.setup(
     author="Andrew D",
     url="http://github.com/andrew-d/enkil",
     download_url="https://github.com/andrew-d/enkil/tarball/master",
-    license="http://www.apache.org/licenses/LICENSE-2.0",
+    license="BSD 2-clause",
     description="Enkil is a Python module designed to gather information about a running system.",
     classifiers = [
         "Topic :: System :: Systems Administration",

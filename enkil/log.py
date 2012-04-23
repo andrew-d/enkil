@@ -31,8 +31,8 @@ class CustomFormatter(logging.Formatter):
         super(CustomFormatter, self).__init__(*args, **kwargs)
 
         # Do we have color?  If the "color" parameter is present and set to
-        # False, will override all other settings.
-        if kwargs.get('color', True) == False:
+        # False, it will override all other settings.
+        if kwargs.get('color') == False:
             self._have_color = False
         if curses is not None:
             self._have_color = curses.can_change_color()
@@ -69,7 +69,7 @@ class CustomFormatter(logging.Formatter):
             prefix = color + prefix + self._nocolor
 
         # Make our format string, and then format it.
-        format_string = prefix + " " + "%(message)s"
+        format_string = prefix + " %(message)s"
         formatted = format_string % record.__dict__
 
         # Format the exeception information, if it exists.

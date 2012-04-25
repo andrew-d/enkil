@@ -117,3 +117,33 @@ def robust_topological_sort(graph):
                 component_graph[node_c].append(successor_c)
 
     return topological_sort(component_graph)
+
+
+class DependencyGraph(object):
+    """
+    This class implements a simple dependency graph with support for nodes
+    and multiple dependencies.
+    """
+
+    def __init__(self):
+        self.nodes = {}
+
+    def add_node(self, node):
+        self.nodes[node] = []
+
+    def add_nodes(self, nodes):
+        for n in nodes:
+            self.add_node(n)
+
+    def add_dependency(self, node, dependency):
+        self.nodes[node].append(dependency)
+
+    def add_dependencies(self, node, dependencies):
+        for dep in dependencies:
+            self.add_dependency(node, dep)
+
+    def get_traversal(self):
+        top_sorted = robust_topological_sort(self.nodes)
+        top_sorted.reverse()
+
+        return top_sorted

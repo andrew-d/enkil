@@ -107,6 +107,7 @@ def getLogger(id, minLevel=logging.DEBUG):
     logger.addHandler(handler)
 
     # Create and attach formatter to the handler
+    # FIXME: calling this function twice attaches formatter twice
     fmt = CustomFormatter()
     handler.setFormatter(fmt)
 

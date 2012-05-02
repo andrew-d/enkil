@@ -15,6 +15,9 @@ except ImportError:
     colorama = None
 
 
+_loggers = {}
+
+
 class CustomFormatter(logging.Formatter):
     """
     This class implements a custom logging formatter that outputs in color, on
@@ -99,6 +102,9 @@ def getLogger(id, minLevel=logging.DEBUG):
     log messages in color, if possible.
     """
 
+    if id in _loggers:
+        return _loggers[id]
+
     logger = logging.getLogger(id)
     logger.setLevel(minLevel)
 
@@ -111,4 +117,5 @@ def getLogger(id, minLevel=logging.DEBUG):
     fmt = CustomFormatter()
     handler.setFormatter(fmt)
 
+    _loggers[id] = logger
     return logger

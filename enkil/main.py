@@ -16,7 +16,7 @@ class InfoClass(object):
     DEPENDENCIES = None
 
     def __init__(self):
-        self.dependencies = type(self).DEPENDENCIES
+        pass
 
     def get(self, info):
         log.error("Base class get() called!")
@@ -75,8 +75,8 @@ def load_plugins(base_info, exclude):
         for handler in handlers:
             graph.add_node((plugin_name, handler()))
 
-            if handler.dependencies is not None:
-                graph.add_dependencies((plugin_name, handler), handler.dependencies)
+            if handler.DEPENDENCIES is not None:
+                graph.add_dependencies((plugin_name, handler), handler.DEPENDENCIES)
 
     return graph
 
@@ -116,7 +116,10 @@ def main():
     #       the info in the parameter and potentially stomping over other
     #       plugins' information.
     for plugin_name, handler in order:
-        log.debug("Calling handler: %r", handler)
+        log.debug("Calling handler: %s", type(handler))
+
+        # Trim off "enkil.plugins." from the start of the name.
+        plugin_name = plugin_name[14:]
 
         if plugin_name not in info:
             info[plugin_name] = {}

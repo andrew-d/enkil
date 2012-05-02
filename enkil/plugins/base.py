@@ -12,40 +12,50 @@ import socket
 import platform
 
 from enkil.log import getLogger
+from enkil.main import InfoClass
 
 log = getLogger(__name__)
 
 
-def getPythonVersion(info):
-    return {
-        "python_version": platform.python_version()
-    }
+class PythonVersion(InfoClass):
+    DEPENDENCIES = None
 
-
-def getHostNameInfo(info):
-    return {
-        "hostname": socket.gethostname(),
-        "fqdn": socket.getfqdn()
-    }
-
-
-def getOsVersionInfo(info):
-    log.warn("Test")
-    return {
-        "platform": {
-            "name": platform.system().lower(),
-            "release": platform.release().lower(),
-            "version": platform.version().lower(),
-            "fullname": platform.platform(),
+    def get(self, info):
+        return {
+            "python_version": platform.python_version()
         }
-    }
+
+
+class HostName(InfoClass):
+    DEPENDENCIES = None
+
+    def get(self, info):
+        return {
+            "hostname": socket.gethostname(),
+            "fqdn": socket.getfqdn()
+        }
+
+
+class OsVersion(InfoClass):
+    DEPENDENCIES = None
+
+    def get(self, info):
+        log.warn("Test")
+        return {
+            "platform": {
+                "name": platform.system().lower(),
+                "release": platform.release().lower(),
+                "version": platform.version().lower(),
+                "fullname": platform.platform(),
+            }
+        }
 
 
 def getHandlers(base_info):
     log.debug("base getHandlers() called")
 
     return [
-        (getPythonVersion, None),
-        (getHostNameInfo, None),
-        (getOsVersionInfo, None),
+        PythonVersion,
+        HostName,
+        OsVersion
     ]

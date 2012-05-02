@@ -1,3 +1,5 @@
+from __future__ import absolute_import
+
 import os
 import imp
 import glob
@@ -5,9 +7,20 @@ import copy
 import json
 
 from .log import getLogger
-from .depgraph import DependencyGraph
+from .depgraph import DependencyGraph, CycleException
 
 log = getLogger(__name__)
+
+
+class InfoClass(object):
+    DEPENDENCIES = None
+
+    def __init__(self):
+        self.dependencies = type(self).DEPENDENCIES
+
+    def get(self, info):
+        log.error("Base class get() called!")
+        raise NotImplemented("Base class get() called!")
 
 
 def plugin_loader(exclude=[]):
@@ -25,7 +38,7 @@ def get_base_info(info):
     module_path = os.path.dirname(__file__)
 
     # Load our base module - this allows us to load further files without errors.
-    _ = imp.load_source("enkil.plugins", os.path.join(module_path, "plugins", "__init__.py"))
+    imp.load_source("enkil.plugins", os.path.join(module_path, "plugins", "__init__.py"))
 
     # Load the base plugin, and get the handlers.
     plugin = imp.load_source("enkil.plugins.base", os.path.join(module_path, "plugins", "base.py"))
@@ -33,8 +46,8 @@ def get_base_info(info):
 
     # Get information for each handler, and add it to the return dict.
     base_info = {"base": {}}
-    for h, _ in handlers:
-        new_info = h(info)
+    for h in handlers:
+        new_info = h().get(info)
         base_info['base'].update(new_info)
 
     # Return base info.
@@ -59,11 +72,11 @@ def load_plugins(base_info, exclude):
 
         log.info("Got handlers: %s", handlers)
 
-        for handler, deps in handlers:
-            graph.add_node((plugin_name, handler))
+        for handler in handlers:
+            graph.add_node((plugin_name, handler()))
 
-            if deps is not None:
-                graph.add_dependencies((plugin_name, handler), deps)
+            if handler.dependencies is not None:
+                graph.add_dependencies((plugin_name, handler), handler.dependencies)
 
     return graph
 
@@ -73,7 +86,12 @@ def main():
 
     # We get our base info first, since this can be used to make decisions
     # about which handlers we run.  Also make a copy for later.
-    info = get_base_info({})
+    try:
+        info = get_base_info({})
+    except Exception, e:
+        log.error("Error while loading base plugins: %s" % (e,))
+        return
+
     given_info = copy.deepcopy(info)
 
     # Copy it to get base_info.  This is a copy, because we don't want any
@@ -84,7 +102,12 @@ def main():
     depgraph = load_plugins(base_info, ['__init__', 'base'])
 
     # Get a topologically-sorted order for the dependency graph.
-    order = depgraph.get_traversal()
+    try:
+        order = depgraph.get_traversal()
+    except CycleException, e:
+        log.error(e)
+        return
+
     log.debug("Plugin ordering is: %r", order)
 
     # Walk through the traversal, allowing each callable to update our info.
@@ -99,7 +122,7 @@ def main():
             info[plugin_name] = {}
             given_info[plugin_name] = {}
 
-        new_info = handler(given_info)
+        new_info = handler.get(given_info)
 
         info[plugin_name].update(new_info)
         given_info[plugin_name].update(new_info)

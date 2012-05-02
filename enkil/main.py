@@ -89,7 +89,7 @@ def main():
     try:
         info = get_base_info({})
     except Exception, e:
-        log.error("Error while loading base plugins: %s" % (e,))
+        log.error("Critical error while loading base plugins: %s" % (e,))
         return
 
     given_info = copy.deepcopy(info)
@@ -99,6 +99,7 @@ def main():
     base_info = copy.deepcopy(info)
 
     # Load each plugin, add the callable handlers to our dependency graph.
+    # Note: We exclude the "base" and "__init__" files from being loaded.
     depgraph = load_plugins(base_info, ['__init__', 'base'])
 
     # Get a topologically-sorted order for the dependency graph.
@@ -125,7 +126,10 @@ def main():
             info[plugin_name] = {}
             given_info[plugin_name] = {}
 
-        new_info = handler.get(given_info)
+        try:
+            new_info = handler.get(given_info)
+        except Exception, e:
+            log.warning("Error while executing plugin %s: %r", plugin_name, e)
 
         info[plugin_name].update(new_info)
         given_info[plugin_name].update(new_info)
